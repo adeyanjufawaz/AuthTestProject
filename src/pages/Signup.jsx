@@ -1,5 +1,7 @@
 import axios from "../axios";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
+Link;
+import { Link } from "react-router-dom";
 
 function Signup() {
   const [loginData, setLogindata] = useState({});
@@ -19,7 +21,8 @@ function Signup() {
     // console.log(loginData);
     try {
       const res = await axios.post(
-        "/create-user",{
+        "/create-user",
+        {
           name: loginData.name,
           country_id: loginData.countryCode,
           mobile_number: loginData.phone,
@@ -28,12 +31,12 @@ function Signup() {
         },
         {
           headers: { "Content-Type": "application/json" },
-          withCredentials: false
+          withCredentials: false,
         }
       );
       console.log(res);
     } catch (error) {
-      console.log(error.response.data.error.message);
+      console.log(error);
     }
   };
   return (
@@ -89,6 +92,9 @@ function Signup() {
           <button className="bg-red-600 px-5 py-2">Submit</button>
         </form>
       </div>
+      <Link to="/admin" className="bg-red-600 px-5 py-2">
+        Admin Page
+      </Link>
     </div>
   );
 }

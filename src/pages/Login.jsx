@@ -1,34 +1,59 @@
 import React, { useEffect, useState } from "react";
 import axios from "../axios";
+import useAuth from "../components/hooks/useAuth";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 function Login() {
   const [loginData, setLogindata] = useState({});
+  const { setAuth } = useAuth()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || "/"
+  const navigate = useNavigate()
+
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     setLogindata({ ...loginData, [name]: value });
   };
 
-  useEffect(() => {
-    console.log(loginData);
-  }, [loginData]);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(loginData);
     try {
+      const { email, password } = loginData;
       const res = await axios.post(
         "/email-login",
-        {
-          email: loginData.email,
-          password: loginData.password,
-        },
+        { email, password },
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: false,
         }
       );
-      console.log(res)
-    } catch (error) {console.log(error);}
+      const data = res?.data?.data
+      console.log(data)
+      setAuth(data);
+      navigate(from,{replace:true})
+    } catch (error) {
+      console.log(error);
+      switch (true) {
+        case !error.response.status:
+          console.log("No Server Response");
+          break;
+        case error.response.status == 422:
+          console.log("Enter All Input Field");
+          break;
+        case error.response.status == 401:
+          console.log("This user is unauthorized");
+          break;
+        case error.response.status == 400:
+          console.log("Invalid Username or password");
+          break;
+
+        default:
+          console.log("first")
+          break;
+      }
+      
+    }
   };
   return (
     <div className="flex p-6 justify-center items-center">

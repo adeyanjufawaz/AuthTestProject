@@ -1,36 +1,41 @@
-import { useState } from 'react'
-import { Link, Route, Routes } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import Login from "./pages/Login"
-import SignUp from "./pages/Signup"
+import { useState } from "react";
+import { Link, Route, Routes } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import Login from "./pages/Login";
+import SignUp from "./pages/Signup";
+import Navbar from "./components/Navbar";
+import Layout from "./components/Layout";
+import ErrorBoundary from "./pages/ErrorBoundary";
+import Admin from "./pages/Admin";
+import Unauthorized from "./pages/Unauthorized";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
-      <nav className=" w-full bg-black  items-center p-4 flex justify-between gap-4">
-        <Link to="/" className="text-white">LOGO</Link>
-        <div className="flex gap-5">
-          <Link
-            className="bg-green-400 py-3 px-5 hover:opacity-90"
-            to="/signUp"
-          >
-            SignUp
-          </Link>
-          <Link className="bg-green-400 py-3 px-5 hover:opacity-90" to="/login">
-            Login
-          </Link>
-        </div>
-      </nav>
-      
+      <Navbar />
+
       <Routes>
-        <Route index path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signUp" element={<SignUp />} />
+        <Route path="/" element={<Layout />}>
+          {/* Public Routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="login" element={<Login />} />
+          <Route path="signUp" element={<SignUp />} />
+          <Route path="unauthorized" element={<Unauthorized />} />
+
+          {/* Protect Routes */}
+          <Route element={<RequireAuth/>}>
+            <Route path="admin" element={<Admin />} />
+          </Route>
+
+          {/* Error Boundary */}
+          <Route path="*" element={<ErrorBoundary />} />
+        </Route>
       </Routes>
     </>
   );
 }
 
-export default App
+export default App;
